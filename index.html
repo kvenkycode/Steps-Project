@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Stepper Navigation</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .step {
+        display: none;
+        padding: 20px;
+        background: #eee;
+        margin-bottom: 10px;
+      }
+
+      .nav-link.disabled {
+        pointer-events: none;
+        opacity: 0.5;
+      }
+
+      .nav-link.visited {
+        color: green;
+        font-weight: bold;
+      }
+
+      .nav-link.active {
+        background-color: #007bff;
+        color: white !important;
+      }
+    </style>
+  </head>
+  <body style="height: 530px; width: 570px; margin: 0 auto" class="text-center">
+    <div class="d-flex align-items-center justify-content-between mt-3">
+      <div>
+        <ul class="nav flex-column" id="navList">
+          <li class="nav-item"><a class="nav-link" href="#">Step 1</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Step 2</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Step 3</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Step 4</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Step 5</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Step 6</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Step 7</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Step 8</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Step 9</a></li>
+        </ul>
+      </div>
+
+      <div
+        id="container"
+        style="display: flex; gap: 5px; justify-content: center; height: 230px; align-items: center;"
+      >
+        <div class="step" style="display: block">Step 1</div>
+        <div class="step">Step 2</div>
+        <div class="step">Step 3</div>
+        <div class="step">Step 4</div>
+        <div class="step">Step 5</div>
+        <div class="step">Step 6</div>
+        <div class="step">Step 7</div>
+        <div class="step">Step 8</div>
+        <div class="step">Step 9</div>
+      </div>
+    </div>
+
+    <button id="prevBtn" class="btn btn-secondary me-2 mt-3">Previous</button>
+    <button id="nextBtn" class="btn btn-primary mt-3">Next</button>
+
+    <script>
+      const steps = document.querySelectorAll(".step");
+      const navItems = document.querySelectorAll(".nav-item");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+
+      let currentStep = 0;
+      let maxVisited = 0; // Track highest visited step
+
+      const showStep = (index) => {
+        // Show step content
+        steps.forEach((step, i) => {
+          step.style.display = i === index ? "block" : "none";
+        });
+
+        // Update nav step states
+        navItems.forEach((navItem, i) => {
+          const link = navItem.querySelector(".nav-link");
+          if (i < index) {
+            link.classList.add("visited");
+            link.classList.remove("active", "disabled");
+          } else if (i === index) {
+            link.classList.add("active");
+            link.classList.remove("visited", "disabled");
+          } else {
+            if (i <= maxVisited) {
+              // Visited or active steps can be clicked
+              link.classList.remove("disabled");
+            } else {
+              link.classList.add("disabled");
+            }
+            link.classList.remove("active", "visited");
+          }
+        });
+
+        // Button control
+        prevBtn.disabled = index === 0;
+        nextBtn.disabled = index === steps.length - 1;
+
+        // Update current and max visited
+        currentStep = index;
+        if (index > maxVisited) maxVisited = index;
+      };
+
+      // Next
+      nextBtn.addEventListener("click", () => {
+        if (currentStep < steps.length - 1) {
+          showStep(currentStep + 1);
+        }
+      });
+
+      // Previous
+      prevBtn.addEventListener("click", () => {
+        if (currentStep > 0) {
+          showStep(currentStep - 1);
+        }
+      });
+
+      // Enable clicking on visited steps
+      navItems.forEach((navItem, i) => {
+        const link = navItem.querySelector(".nav-link");
+        link.addEventListener("click", () => {
+          if (!link.classList.contains("disabled")) {
+            showStep(i);
+          }
+        });
+      });
+
+      // Initialize
+      showStep(currentStep);
+    </script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
